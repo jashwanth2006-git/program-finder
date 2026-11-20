@@ -402,7 +402,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
   }
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-slate-50/60 p-4 sm:p-6 lg:p-8">
+    <div className="min-h-[calc(100vh-4rem)] bg-slate-50/60 p-3 sm:p-6 lg:p-8">
       {/* Hidden file input for Replace action */}
       <input
         type="file"
@@ -412,22 +412,22 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
         onChange={handleExecuteReplace}
       />
 
-      <div className="max-w-7xl mx-auto space-y-8">
+      <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
         {/* Dashboard Title Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 pb-4 border-b border-slate-200">
           <div>
             <div className="flex items-center space-x-2">
               <span className="px-2.5 py-0.5 rounded-md bg-indigo-100 text-indigo-700 text-[11px] font-bold uppercase tracking-wider">
                 Management Console
               </span>
-              <h1 className="text-2xl font-bold text-slate-900">Admin Dashboard</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-slate-900">Admin Dashboard</h1>
             </div>
             <p className="text-xs text-slate-500 mt-1">
               Upload programming question papers and lab manuals, review automatic extractions, and publish them to students.
             </p>
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => onNavigate('home')}
               className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl transition-colors shadow-2xs cursor-pointer"
@@ -456,7 +456,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
         </div>
 
         {/* SECTION 1: PDF UPLOAD */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-7">
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-7">
           <div className="flex items-center space-x-2 mb-4">
             <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
               <Upload className="w-4 h-4" />
@@ -594,7 +594,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
 
         {/* SECTION 2: UPLOADED PDF LIST */}
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-200 bg-slate-50/60 flex items-center justify-between">
+          <div className="px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-200 bg-slate-50/60 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2">
             <div className="flex items-center space-x-2">
               <Layers className="w-4 h-4 text-indigo-600" />
               <h2 className="text-sm font-bold uppercase tracking-wider text-slate-800">
@@ -621,7 +621,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+              <table className="w-full min-w-[720px] text-left border-collapse">
                 <thead>
                   <tr className="border-b border-slate-200 bg-slate-50/40 text-[11px] font-bold uppercase tracking-wider text-slate-500">
                     <th className="py-3 px-6">Document Details</th>

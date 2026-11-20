@@ -112,23 +112,23 @@ export const OutputViewer: React.FC<OutputViewerProps> = ({ output, questionNumb
       {/* Lightbox Modal */}
       {isLightboxOpen && resolvedImageUrl && (
         <div
-          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-xs flex items-center justify-center p-4 cursor-pointer"
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 cursor-pointer"
           onClick={() => setIsLightboxOpen(false)}
         >
           <div
-            className="relative max-w-5xl max-h-[90vh] bg-transparent flex flex-col items-center justify-center"
+            className="relative max-w-5xl max-h-[92vh] bg-transparent flex flex-col items-center justify-center"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={() => setIsLightboxOpen(false)}
-              className="absolute -top-10 right-0 p-1.5 rounded-full text-white/80 hover:text-white bg-black/50 hover:bg-black/80 transition-colors"
+              className="absolute top-2 right-2 sm:-top-10 sm:right-0 z-10 p-2 rounded-full text-white/90 hover:text-white bg-black/70 hover:bg-black transition-colors"
             >
-              <X className="w-6 h-6" />
+              <X className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
             <img
               src={resolvedImageUrl}
               alt="Full output preview"
-              className="max-h-[85vh] max-w-full object-contain rounded-lg shadow-2xl"
+              className="max-h-[82vh] max-w-[94vw] object-contain rounded-lg shadow-2xl"
             />
           </div>
         </div>

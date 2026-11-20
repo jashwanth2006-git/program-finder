@@ -312,36 +312,37 @@ export const AdminReviewModal: React.FC<AdminReviewModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-hidden">
-      <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-6xl max-h-[94vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 md:p-6 overflow-hidden">
+      <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl border border-slate-200 w-full max-w-6xl max-h-[96vh] sm:max-h-[94vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50">
-          <div>
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 bg-slate-50 gap-2">
+          <div className="min-w-0">
             <div className="flex items-center space-x-2">
-              <span className="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-indigo-100 text-indigo-700">
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-indigo-100 text-indigo-700 shrink-0">
                 Extraction Review
               </span>
-              <h2 className="text-lg font-bold text-slate-900 truncate max-w-md">
+              <h2 className="text-sm sm:text-lg font-bold text-slate-900 truncate max-w-[140px] sm:max-w-md">
                 {doc.display_name || doc.file_name}
               </h2>
             </div>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 hidden sm:block">
               Review and refine extracted questions, programs, and outputs before publishing to users.
             </p>
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
             <button
               onClick={handleAddQuestion}
-              className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-lg border border-indigo-200 transition-colors"
+              className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-lg border border-indigo-200 transition-colors cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>Add Question</span>
+              <span className="hidden sm:inline">Add Question</span>
+              <span className="sm:hidden">Add</span>
             </button>
 
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-200 transition-colors"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-200 transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -350,13 +351,13 @@ export const AdminReviewModal: React.FC<AdminReviewModalProps> = ({
 
         {/* Alerts */}
         {errorMsg && (
-          <div className="mx-6 mt-4 p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex items-center space-x-2">
+          <div className="mx-4 sm:mx-6 mt-3 sm:mt-4 p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex items-center space-x-2">
             <AlertTriangle className="w-4 h-4 shrink-0 text-red-500" />
             <span>{errorMsg}</span>
           </div>
         )}
         {successMsg && (
-          <div className="mx-6 mt-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-700 flex items-center space-x-2">
+          <div className="mx-4 sm:mx-6 mt-3 sm:mt-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-700 flex items-center space-x-2">
             <CheckCircle className="w-4 h-4 shrink-0 text-emerald-500" />
             <span>{successMsg}</span>
           </div>
@@ -365,13 +366,13 @@ export const AdminReviewModal: React.FC<AdminReviewModalProps> = ({
         {/* Modal Main Area */}
         <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
           {/* Question List Sidebar / Tabs */}
-          <div className="w-full md:w-64 border-r border-slate-200 bg-slate-50/70 p-3 overflow-y-auto space-y-1">
-            <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-2 pb-1">
+          <div className="w-full md:w-64 border-b md:border-b-0 md:border-r border-slate-200 bg-slate-50/70 p-2 sm:p-3 overflow-x-auto md:overflow-y-auto flex md:flex-col gap-1.5 md:space-y-1 shrink-0">
+            <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-2 pb-1 shrink-0 hidden md:block">
               Extracted Questions ({questions.length})
             </div>
 
             {questions.length === 0 ? (
-              <div className="p-4 text-center text-xs text-slate-400 border border-dashed border-slate-200 rounded-xl">
+              <div className="p-3 sm:p-4 text-center text-xs text-slate-400 border border-dashed border-slate-200 rounded-xl w-full">
                 No questions found. Click "Add Question" to manually add entries.
               </div>
             ) : (
@@ -379,10 +380,10 @@ export const AdminReviewModal: React.FC<AdminReviewModalProps> = ({
                 <button
                   key={idx}
                   onClick={() => setActiveTabIdx(idx)}
-                  className={`w-full text-left px-3 py-2.5 rounded-xl text-xs transition-all flex items-center justify-between ${
+                  className={`text-left px-2.5 sm:px-3 py-1.5 sm:py-2.5 rounded-xl text-xs transition-all flex items-center justify-between shrink-0 md:shrink md:w-full whitespace-nowrap md:whitespace-normal cursor-pointer ${
                     activeTabIdx === idx
                       ? 'bg-indigo-600 text-white font-semibold shadow-xs'
-                      : 'text-slate-700 hover:bg-slate-200/60'
+                      : 'text-slate-700 hover:bg-slate-200/60 bg-white md:bg-transparent border md:border-0 border-slate-200'
                   }`}
                 >
                   <div className="truncate pr-2">
@@ -394,9 +395,9 @@ export const AdminReviewModal: React.FC<AdminReviewModalProps> = ({
                     </span>
                   </div>
                   {q.source_code ? (
-                    <span className={`w-2 h-2 rounded-full ${activeTabIdx === idx ? 'bg-white' : 'bg-emerald-500'}`} />
+                    <span className={`w-2 h-2 rounded-full shrink-0 ${activeTabIdx === idx ? 'bg-white' : 'bg-emerald-500'}`} />
                   ) : (
-                    <span className="w-2 h-2 rounded-full bg-amber-400" title="No code extracted" />
+                    <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" title="No code extracted" />
                   )}
                 </button>
               ))
@@ -405,11 +406,11 @@ export const AdminReviewModal: React.FC<AdminReviewModalProps> = ({
 
           {/* Question Details Editor */}
           {currentQ ? (
-            <div className="flex-1 p-6 overflow-y-auto space-y-5 bg-white">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
-                <div className="flex items-center space-x-3">
-                  <div className="w-28">
-                    <label className="block text-[11px] font-bold uppercase text-slate-500 mb-1">
+            <div className="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4 sm:space-y-5 bg-white">
+              <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                <div className="flex items-center space-x-2.5 sm:space-x-3">
+                  <div className="w-24 sm:w-28">
+                    <label className="block text-[10px] sm:text-[11px] font-bold uppercase text-slate-500 mb-1">
                       Question No.
                     </label>
                     <input
@@ -417,18 +418,18 @@ export const AdminReviewModal: React.FC<AdminReviewModalProps> = ({
                       value={currentQ.question_number}
                       onChange={(e) => handleFieldChange('question_number', e.target.value)}
                       placeholder="e.g. 1(a)"
-                      className="w-full px-3 py-1.5 text-sm font-mono font-bold border border-slate-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
+                      className="w-full px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-mono font-bold border border-slate-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
                     />
                   </div>
 
-                  <div className="w-36">
-                    <label className="block text-[11px] font-bold uppercase text-slate-500 mb-1">
+                  <div className="w-28 sm:w-36">
+                    <label className="block text-[10px] sm:text-[11px] font-bold uppercase text-slate-500 mb-1">
                       Language
                     </label>
                     <select
                       value={currentQ.programming_language || 'python'}
                       onChange={(e) => handleFieldChange('programming_language', e.target.value)}
-                      className="w-full px-3 py-1.5 text-xs font-medium border border-slate-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-indigo-500 bg-white"
+                      className="w-full px-2.5 sm:px-3 py-1.5 text-xs font-medium border border-slate-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-indigo-500 bg-white"
                     >
                       <option value="python">Python</option>
                       <option value="c">C</option>
@@ -443,10 +444,10 @@ export const AdminReviewModal: React.FC<AdminReviewModalProps> = ({
 
                 <button
                   onClick={() => handleDeleteQuestion(activeTabIdx)}
-                  className="flex items-center space-x-1.5 text-xs text-red-600 hover:text-red-700 hover:bg-red-50 px-2.5 py-1.5 rounded-lg border border-red-200 transition-colors self-start sm:self-auto"
+                  className="flex items-center space-x-1.5 text-xs text-red-600 hover:text-red-700 hover:bg-red-50 px-2.5 py-1.5 rounded-lg border border-red-200 transition-colors ml-auto sm:ml-0 cursor-pointer"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
-                  <span>Delete Question</span>
+                  <span>Delete</span>
                 </button>
               </div>
 
@@ -619,8 +620,8 @@ export const AdminReviewModal: React.FC<AdminReviewModalProps> = ({
         </div>
 
         {/* Modal Footer Controls */}
-        <div className="flex flex-col sm:flex-row items-center justify-between px-6 py-4 border-t border-slate-200 bg-slate-50 gap-3">
-          <div className="text-xs text-slate-500">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-t border-slate-200 bg-slate-50 gap-2.5 sm:gap-3">
+          <div className="text-xs text-slate-500 text-center sm:text-left">
             Total Questions: <span className="font-bold text-slate-800">{questions.length}</span>
             {doc.is_published && (
               <span className="ml-2 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-semibold text-[10px]">
@@ -629,11 +630,11 @@ export const AdminReviewModal: React.FC<AdminReviewModalProps> = ({
             )}
           </div>
 
-          <div className="flex items-center space-x-3 w-full sm:w-auto justify-end">
+          <div className="flex items-center space-x-2 sm:space-x-3 w-full sm:w-auto justify-end">
             <button
               onClick={() => saveExtractedData(false)}
               disabled={saving}
-              className="flex items-center space-x-1.5 px-4 py-2 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 rounded-xl transition-colors disabled:opacity-50"
+              className="flex-1 sm:flex-initial flex items-center justify-center space-x-1.5 px-3.5 sm:px-4 py-2 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 rounded-xl transition-colors disabled:opacity-50 cursor-pointer"
             >
               <Save className="w-3.5 h-3.5" />
               <span>{saving ? 'Saving...' : 'Save Draft'}</span>
@@ -642,10 +643,10 @@ export const AdminReviewModal: React.FC<AdminReviewModalProps> = ({
             <button
               onClick={() => saveExtractedData(true)}
               disabled={saving}
-              className="flex items-center space-x-1.5 px-5 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-md shadow-indigo-500/20 transition-all disabled:opacity-50"
+              className="flex-1 sm:flex-initial flex items-center justify-center space-x-1.5 px-4 sm:px-5 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-md shadow-indigo-500/20 transition-all disabled:opacity-50 cursor-pointer"
             >
               <CheckCircle className="w-3.5 h-3.5" />
-              <span>{saving ? 'Publishing...' : 'Approve & Publish PDF'}</span>
+              <span>{saving ? 'Publishing...' : 'Approve & Publish'}</span>
             </button>
           </div>
         </div>

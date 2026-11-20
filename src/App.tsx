@@ -51,11 +51,11 @@ const MainApp: React.FC = () => {
       </main>
 
       {/* Minimal Bottom Footer */}
-      <footer className="py-3 text-center text-xs text-slate-400 border-t border-slate-200/60 bg-white">
-        <div className="flex items-center justify-center space-x-2">
-          <Code2 className="w-3.5 h-3.5 text-indigo-500" />
+      <footer className="py-3 px-4 text-center text-xs text-slate-400 border-t border-slate-200/60 bg-white">
+        <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
+          <Code2 className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
           <span className="font-semibold text-slate-600">Program Finder</span>
-          <span>• Precision Computer Science Program & Code Retrieval</span>
+          <span className="hidden sm:inline">• Precision Computer Science Program & Code Retrieval</span>
         </div>
       </footer>
     </div>

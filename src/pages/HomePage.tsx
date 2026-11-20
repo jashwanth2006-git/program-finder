@@ -145,12 +145,12 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   return (
     <div className="flex-1 min-h-screen flex flex-col bg-slate-50 relative">
       {/* Sleek Top Header Bar */}
-      <header className="w-full bg-white border-b border-slate-200 px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between shrink-0 shadow-xs">
-        <div className="flex items-center space-x-2.5">
-          <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-xs">
+      <header className="w-full bg-white border-b border-slate-200 px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between shrink-0 shadow-xs">
+        <div className="flex items-center space-x-2">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-xs shrink-0">
             <Code2 className="w-4 h-4" />
           </div>
-          <span className="font-bold text-base sm:text-lg text-slate-900 tracking-tight">
+          <span className="font-bold text-sm sm:text-lg text-slate-900 tracking-tight">
             Program<span className="text-indigo-600">Finder</span>
           </span>
         </div>
@@ -158,42 +158,44 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
         {/* Admin Navigation */}
         <div>
           {user ? (
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1.5 sm:space-x-2">
               {isAdmin && (
                 <button
                   onClick={() => onNavigate('admin')}
-                  className="flex items-center space-x-1.5 px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold shadow-xs transition-all cursor-pointer"
+                  className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold shadow-xs transition-all cursor-pointer"
                 >
                   <Shield className="w-3.5 h-3.5" />
-                  <span>Admin Dashboard</span>
+                  <span className="hidden sm:inline">Admin Dashboard</span>
+                  <span className="sm:hidden">Admin</span>
                 </button>
               )}
               <button
                 onClick={signOut}
-                className="flex items-center space-x-1 px-3 py-1.5 bg-white hover:bg-red-50 text-slate-600 hover:text-red-600 rounded-xl text-xs font-semibold border border-slate-200 transition-all cursor-pointer shadow-xs"
+                className="flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 bg-white hover:bg-red-50 text-slate-600 hover:text-red-600 rounded-xl text-xs font-semibold border border-slate-200 transition-all cursor-pointer shadow-xs"
                 title="Sign Out"
               >
                 <LogOut className="w-3.5 h-3.5" />
-                <span>Logout</span>
+                <span className="hidden sm:inline">Logout</span>
               </button>
             </div>
           ) : (
             <button
               onClick={() => onNavigate('login')}
-              className="flex items-center space-x-1.5 px-3.5 py-1.5 bg-white hover:bg-slate-50 text-slate-700 hover:text-indigo-600 rounded-xl text-xs font-semibold shadow-xs border border-slate-200 transition-all cursor-pointer"
+              className="flex items-center space-x-1.5 px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-700 hover:text-indigo-600 rounded-xl text-xs font-semibold shadow-xs border border-slate-200 transition-all cursor-pointer"
             >
               <Shield className="w-3.5 h-3.5 text-indigo-500" />
-              <span>Admin Login</span>
+              <span className="hidden sm:inline">Admin Login</span>
+              <span className="sm:hidden">Login</span>
             </button>
           )}
         </div>
       </header>
 
       {/* SINGLE UNIFIED SEARCH BAR CONTAINER - FULL WIDTH */}
-      <div className="w-full px-4 sm:px-6 lg:px-8 py-4 shrink-0">
+      <div className="w-full px-3 sm:px-6 lg:px-8 py-3 sm:py-4 shrink-0">
         {/* Missing Supabase configuration alert */}
         {!isConfigured && (
-          <div className="mb-3 p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 flex items-start space-x-3">
+          <div className="mb-3 p-3 sm:p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 flex items-start space-x-2.5 sm:space-x-3">
             <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
             <div>
               <p className="font-semibold text-amber-900">Supabase Connection Required</p>
@@ -206,17 +208,17 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
 
         {/* Error Banner */}
         {errorMsg && (
-          <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex items-center space-x-2 animate-in fade-in duration-150">
+          <div className="mb-3 p-2.5 sm:p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex items-center space-x-2 animate-in fade-in duration-150">
             <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
             <span>{errorMsg}</span>
           </div>
         )}
 
         {/* THE SINGLE SEARCH BAR */}
-        <div className="relative flex flex-col sm:flex-row items-stretch sm:items-center bg-white rounded-2xl shadow-sm border border-slate-200 hover:border-indigo-400/80 focus-within:ring-4 focus-within:ring-indigo-100 focus-within:border-indigo-500 transition-all p-1.5 sm:p-2 w-full">
+        <div className="relative flex flex-col sm:flex-row items-stretch sm:items-center bg-white rounded-2xl shadow-sm border border-slate-200 hover:border-indigo-400/80 focus-within:ring-4 focus-within:ring-indigo-100 focus-within:border-indigo-500 transition-all p-1.5 sm:p-2 w-full gap-1.5 sm:gap-0">
           {/* Integrated Document Selector Pill (if documents exist) */}
           {documents.length > 0 && (
-            <div className="flex items-center space-x-1.5 px-3 py-1.5 sm:py-0 border-b sm:border-b-0 sm:border-r border-slate-200 shrink-0">
+            <div className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 sm:py-0 border-b sm:border-b-0 sm:border-r border-slate-200 shrink-0 w-full sm:w-auto">
               <FileText className="w-4 h-4 text-indigo-500 shrink-0" />
               <select
                 value={selectedDocId}
@@ -226,7 +228,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                   setSearchPerformed(false);
                   setSearchResults([]);
                 }}
-                className={`bg-slate-100/90 hover:bg-slate-200/80 text-xs font-semibold py-1.5 px-2.5 rounded-lg border-0 focus:ring-0 focus:outline-hidden cursor-pointer max-w-[200px] sm:max-w-[220px] truncate transition-colors ${
+                className={`bg-slate-100/90 hover:bg-slate-200/80 text-xs font-semibold py-1.5 px-2.5 rounded-lg border-0 focus:ring-0 focus:outline-hidden cursor-pointer w-full sm:w-auto sm:max-w-[220px] truncate transition-colors ${
                   !selectedDocId ? 'text-slate-500 font-normal italic' : 'text-slate-800'
                 }`}
                 title="Select Question Paper / PDF"
@@ -242,15 +244,15 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           )}
 
           {/* Search Icon & Text Input */}
-          <div className="flex-1 flex items-center px-3 py-1.5">
-            <Search className="w-5 h-5 text-slate-400 shrink-0 mr-2.5" />
+          <div className="flex-1 flex items-center px-2.5 sm:px-3 py-1 sm:py-1.5 min-w-0">
+            <Search className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 shrink-0 mr-2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Search question number (e.g. 1, 1(a), 2(b), 10(a))..."
-              className="w-full text-sm sm:text-base font-semibold text-slate-900 placeholder-slate-400 bg-transparent border-0 focus:outline-hidden focus:ring-0"
+              placeholder="Search question number (e.g. 1, 1(a), 2(b))..."
+              className="w-full text-xs sm:text-sm md:text-base font-semibold text-slate-900 placeholder-slate-400 bg-transparent border-0 focus:outline-hidden focus:ring-0"
               autoFocus
             />
           </div>
@@ -259,7 +261,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           <button
             onClick={() => handleSearch()}
             disabled={searching}
-            className="flex items-center justify-center space-x-2 px-6 py-2.5 sm:py-3 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold text-sm rounded-xl shadow-xs transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shrink-0 mt-1 sm:mt-0"
+            className="flex items-center justify-center space-x-2 px-5 sm:px-6 py-2.5 sm:py-3 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-xs transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shrink-0 w-full sm:w-auto"
           >
             {searching ? (
               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -274,14 +276,14 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
 
         {/* Quick Format Tags under the single search bar */}
         <div className="mt-2.5 flex flex-wrap items-center justify-between text-xs text-slate-500 px-1 gap-2">
-          <div className="flex items-center space-x-1.5">
-            <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
-            <span>Try searching:</span>
+          <div className="flex items-center space-x-1.5 overflow-x-auto max-w-full pb-1 sm:pb-0">
+            <HelpCircle className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+            <span className="shrink-0 text-[11px] sm:text-xs">Try:</span>
             {['1', '1(a)', '1(b)', '2(a)', '10(a)'].map((tag) => (
               <button
                 key={tag}
                 onClick={() => handleSelectQuestionTag(tag)}
-                className="font-mono bg-white hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 px-2 py-0.5 rounded text-slate-700 font-semibold cursor-pointer transition-colors"
+                className="font-mono bg-white hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 px-2 py-0.5 rounded text-slate-700 font-semibold cursor-pointer transition-colors text-[11px] shrink-0"
               >
                 {tag}
               </button>
@@ -289,7 +291,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           </div>
 
           {documents.length > 0 && (
-            <span className="text-slate-400 text-[11px]">
+            <span className="text-slate-400 text-[10px] sm:text-[11px] shrink-0">
               {documents.length} PDF paper{documents.length !== 1 ? 's' : ''} available
             </span>
           )}
@@ -297,7 +299,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
       </div>
 
       {/* RESULTS DISPLAY AREA - FULL PAGE WIDTH */}
-      <div className="w-full px-4 sm:px-6 lg:px-8 pb-8 flex-1 flex flex-col">
+      <div className="w-full px-3 sm:px-6 lg:px-8 pb-6 sm:pb-8 flex-1 flex flex-col">
         {/* State 1: No PDFs Uploaded / Published */}
         {!loadingDocs && documents.length === 0 && (
           <div className="bg-white rounded-2xl border border-slate-200 p-10 text-center shadow-xs">
@@ -321,26 +323,26 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
 
         {/* State 2: Active Result Found */}
         {currentMatch && (
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 lg:p-8 animate-in fade-in zoom-in-98 duration-200 flex-1 w-full flex flex-col">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 sm:p-6 lg:p-8 animate-in fade-in zoom-in-98 duration-200 flex-1 w-full flex flex-col">
             {/* If multiple PDFs matched the question number, render tabs */}
             {searchResults.length > 1 && (
-              <div className="mb-6 pb-4 border-b border-slate-100">
+              <div className="mb-4 sm:mb-6 pb-3 sm:pb-4 border-b border-slate-100">
                 <p className="text-xs font-semibold text-slate-500 mb-2">
                   Found in {searchResults.length} documents:
                 </p>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-nowrap sm:flex-wrap gap-2 overflow-x-auto pb-1 scrollbar-none">
                   {searchResults.map((m, idx) => (
                     <button
                       key={idx}
                       onClick={() => setActiveMatchIndex(idx)}
-                      className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                      className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer shrink-0 ${
                         activeMatchIndex === idx
                           ? 'bg-indigo-600 text-white shadow-xs'
                           : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                       }`}
                     >
                       <FileText className="w-3.5 h-3.5" />
-                      <span>{m.doc.display_name || m.doc.file_name}</span>
+                      <span className="truncate max-w-[150px] sm:max-w-none">{m.doc.display_name || m.doc.file_name}</span>
                     </button>
                   ))}
                 </div>
@@ -348,21 +350,21 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
             )}
 
             {/* Split 2-Column Layout: Question on Left, Code on Right */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start flex-1">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-start flex-1">
               {/* LEFT COLUMN: Question Details & Output */}
-              <div className="lg:col-span-5 space-y-5">
+              <div className="lg:col-span-5 space-y-4 sm:space-y-5">
                 {/* Header & Badges */}
-                <div className="space-y-3 pb-4 border-b border-slate-100">
-                  <div className="flex items-center justify-between">
-                    <span className="px-3.5 py-1.5 bg-indigo-600 text-white font-mono font-bold text-sm rounded-lg shadow-xs">
+                <div className="space-y-2.5 sm:space-y-3 pb-3 sm:pb-4 border-b border-slate-100">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <span className="px-3 py-1 sm:px-3.5 sm:py-1.5 bg-indigo-600 text-white font-mono font-bold text-xs sm:text-sm rounded-lg shadow-xs">
                       QUESTION {currentMatch.question.question_number}
                     </span>
-                    <span className="text-xs font-mono px-3 py-1 bg-slate-100 text-slate-700 rounded-md uppercase font-semibold">
+                    <span className="text-[11px] sm:text-xs font-mono px-2.5 py-0.5 sm:px-3 sm:py-1 bg-slate-100 text-slate-700 rounded-md uppercase font-semibold">
                       {currentMatch.question.programming_language || 'Program'}
                     </span>
                   </div>
 
-                  <div className="flex items-center space-x-1.5 text-xs text-slate-500">
+                  <div className="flex items-center space-x-1.5 text-xs text-slate-500 min-w-0">
                     <FileText className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
                     <span className="font-semibold text-slate-700 truncate">
                       {currentMatch.doc.display_name || currentMatch.doc.file_name}
@@ -377,10 +379,10 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
 
                 {/* Question Name / Title */}
                 <div>
-                  <h3 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                  <h3 className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
                     Problem Statement
                   </h3>
-                  <h2 className="text-lg sm:text-xl font-bold text-slate-900 leading-relaxed">
+                  <h2 className="text-base sm:text-xl font-bold text-slate-900 leading-snug sm:leading-relaxed break-words">
                     {currentMatch.question.question_name}
                   </h2>
                 </div>
