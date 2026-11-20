@@ -31,7 +31,7 @@ interface SearchMatch {
 export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   const { user, isAdmin, signOut } = useAuth();
   const [documents, setDocuments] = useState<PdfDocument[]>([]);
-  const [selectedDocId, setSelectedDocId] = useState<string>('all');
+  const [selectedDocId, setSelectedDocId] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [searchResults, setSearchResults] = useState<SearchMatch[]>([]);
   const [activeMatchIndex, setActiveMatchIndex] = useState<number>(0);
@@ -76,8 +76,14 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   }, [isConfigured]);
 
   // Perform Question Search
-  const handleSearch = (overrideQuery?: string) => {
+  const handleSearch = (overrideQuery?: string, overrideDocId?: string) => {
+    const docId = overrideDocId !== undefined ? overrideDocId : selectedDocId;
     const query = (overrideQuery !== undefined ? overrideQuery : searchQuery).trim();
+
+    if (!docId) {
+      setErrorMsg('Please select a question paper / PDF first before searching.');
+      return;
+    }
 
     if (!query) {
       setErrorMsg('Please enter a question number to search (e.g. 1, 1(a), 2(b)).');
@@ -94,10 +100,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
     setSearchPerformed(true);
     setActiveMatchIndex(0);
 
-    const targetDocs =
-      selectedDocId === 'all'
-        ? documents
-        : documents.filter((d) => d.id === selectedDocId);
+    const targetDocs = documents.filter((d) => d.id === docId);
 
     const matches: SearchMatch[] = [];
 
@@ -129,9 +132,12 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
     }
   };
 
-  const handleSelectQuestionTag = (qNum: string) => {
+  const handleSelectQuestionTag = (qNum: string, docId?: string) => {
+    if (docId) {
+      setSelectedDocId(docId);
+    }
     setSearchQuery(qNum);
-    handleSearch(qNum);
+    handleSearch(qNum, docId);
   };
 
   const currentMatch = searchResults[activeMatchIndex] || null;
@@ -216,15 +222,18 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                 value={selectedDocId}
                 onChange={(e) => {
                   setSelectedDocId(e.target.value);
+                  setErrorMsg(null);
                   setSearchPerformed(false);
                   setSearchResults([]);
                 }}
-                className="bg-slate-100/90 hover:bg-slate-200/80 text-slate-800 text-xs font-semibold py-1.5 px-2.5 rounded-lg border-0 focus:ring-0 focus:outline-hidden cursor-pointer max-w-[200px] sm:max-w-[220px] truncate transition-colors"
-                title="Filter by Question Paper"
+                className={`bg-slate-100/90 hover:bg-slate-200/80 text-xs font-semibold py-1.5 px-2.5 rounded-lg border-0 focus:ring-0 focus:outline-hidden cursor-pointer max-w-[200px] sm:max-w-[220px] truncate transition-colors ${
+                  !selectedDocId ? 'text-slate-500 font-normal italic' : 'text-slate-800'
+                }`}
+                title="Select Question Paper / PDF"
               >
-                <option value="all">All Uploaded PDFs ({documents.length})</option>
+                <option value="" disabled>-- Select Question Paper --</option>
                 {documents.map((doc) => (
-                  <option key={doc.id} value={doc.id}>
+                  <option key={doc.id} value={doc.id} className="text-slate-800 font-semibold not-italic">
                     {doc.display_name || doc.file_name}
                   </option>
                 ))}
@@ -433,7 +442,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                     (doc.extracted_content?.questions || []).map((q, idx) => (
                       <button
                         key={`${doc.id}-${idx}`}
-                        onClick={() => handleSelectQuestionTag(q.question_number)}
+                        onClick={() => handleSelectQuestionTag(q.question_number, doc.id)}
                         className="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 rounded-lg text-xs font-mono font-medium text-slate-700 transition-colors cursor-pointer"
                         title={`From: ${doc.display_name || doc.file_name}`}
                       >
