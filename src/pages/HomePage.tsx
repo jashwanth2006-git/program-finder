@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 import type { PdfDocument, ExtractedQuestion } from '../types';
-import { matchesQuestionNumber } from '../lib/normalizer';
 import { CodeBlock } from '../components/CodeBlock';
 import { OutputViewer } from '../components/OutputViewer';
 import {
@@ -12,11 +11,11 @@ import {
   HelpCircle,
   BookOpen,
   ChevronRight,
-  ArrowRight,
   FolderOpen,
   Shield,
   LogOut,
   Code2,
+  Sparkles,
 } from 'lucide-react';
 
 interface HomePageProps {
@@ -32,12 +31,11 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   const { user, isAdmin, signOut } = useAuth();
   const [documents, setDocuments] = useState<PdfDocument[]>([]);
   const [selectedDocId, setSelectedDocId] = useState<string>('');
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [filterQuery, setFilterQuery] = useState<string>('');
   const [searchResults, setSearchResults] = useState<SearchMatch[]>([]);
   const [activeMatchIndex, setActiveMatchIndex] = useState<number>(0);
   const [searchPerformed, setSearchPerformed] = useState<boolean>(false);
   const [loadingDocs, setLoadingDocs] = useState<boolean>(true);
-  const [searching, setSearching] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const isConfigured = isSupabaseConfigured();
@@ -75,69 +73,38 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
     fetchPublishedDocuments();
   }, [isConfigured]);
 
-  // Perform Question Search
-  const handleSearch = (overrideQuery?: string, overrideDocId?: string) => {
-    const docId = overrideDocId !== undefined ? overrideDocId : selectedDocId;
-    const query = (overrideQuery !== undefined ? overrideQuery : searchQuery).trim();
+  const currentDoc = documents.find((d) => d.id === selectedDocId);
+  const currentDocQuestions: ExtractedQuestion[] = currentDoc?.extracted_content?.questions || [];
 
-    if (!docId) {
-      setErrorMsg('Please select a question paper / PDF first before searching.');
-      return;
-    }
+  const visibleQuestions = filterQuery.trim()
+    ? currentDocQuestions.filter(
+        (q) =>
+          q.question_number.toLowerCase().includes(filterQuery.toLowerCase()) ||
+          q.question_name.toLowerCase().includes(filterQuery.toLowerCase())
+      )
+    : currentDocQuestions;
 
-    if (!query) {
-      setErrorMsg('Please enter a question number to search (e.g. 1, 1(a), 2(b)).');
-      return;
-    }
-
-    if (documents.length === 0) {
-      setErrorMsg('No question papers are available yet.');
-      return;
-    }
-
-    setSearching(true);
-    setErrorMsg(null);
-    setSearchPerformed(true);
+  // Select a question directly
+  const handleSelectQuestionDirect = (question: ExtractedQuestion, doc: PdfDocument) => {
+    setSearchResults([{ doc, question }]);
     setActiveMatchIndex(0);
-
-    const targetDocs = documents.filter((d) => d.id === docId);
-
-    const matches: SearchMatch[] = [];
-
-    for (const doc of targetDocs) {
-      const questions: ExtractedQuestion[] = doc.extracted_content?.questions || [];
-      const found = questions.find((q) => {
-        return (
-          matchesQuestionNumber(q.question_number, query) ||
-          matchesQuestionNumber(q.normalized_number, query) ||
-          q.question_number.trim().toLowerCase() === query.toLowerCase() ||
-          q.question_name.toLowerCase().includes(query.toLowerCase())
-        );
-      });
-
-      if (found) {
-        matches.push({ doc, question: found });
-      }
-    }
-
-    setTimeout(() => {
-      setSearchResults(matches);
-      setSearching(false);
-    }, 120);
+    setSearchPerformed(true);
+    setErrorMsg(null);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleSearch();
+  // Change selected question paper
+  const handleDocChange = (docId: string) => {
+    setSelectedDocId(docId);
+    setErrorMsg(null);
+    setFilterQuery('');
+    const doc = documents.find((d) => d.id === docId);
+    const qs = doc?.extracted_content?.questions || [];
+    if (qs.length > 0) {
+      handleSelectQuestionDirect(qs[0], doc!);
+    } else {
+      setSearchResults([]);
+      setSearchPerformed(false);
     }
-  };
-
-  const handleSelectQuestionTag = (qNum: string, docId?: string) => {
-    if (docId) {
-      setSelectedDocId(docId);
-    }
-    setSearchQuery(qNum);
-    handleSearch(qNum, docId);
   };
 
   const currentMatch = searchResults[activeMatchIndex] || null;
@@ -191,8 +158,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
         </div>
       </header>
 
-      {/* SINGLE UNIFIED SEARCH BAR CONTAINER - FULL WIDTH */}
-      <div className="w-full px-3 sm:px-6 lg:px-8 py-3 sm:py-4 shrink-0">
+      {/* PDF SELECTION & REAL QUESTION NUMBER PILLS CONTAINER */}
+      <div className="w-full px-3 sm:px-6 lg:px-8 py-3 shrink-0">
         {/* Missing Supabase configuration alert */}
         {!isConfigured && (
           <div className="mb-3 p-3 sm:p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 flex items-start space-x-2.5 sm:space-x-3">
@@ -214,22 +181,20 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           </div>
         )}
 
-        {/* THE SINGLE SEARCH BAR */}
-        <div className="relative flex flex-col sm:flex-row items-stretch sm:items-center bg-white rounded-2xl shadow-sm border border-slate-200 hover:border-indigo-400/80 focus-within:ring-4 focus-within:ring-indigo-100 focus-within:border-indigo-500 transition-all p-1.5 sm:p-2 w-full gap-1.5 sm:gap-0">
-          {/* Integrated Document Selector Pill (if documents exist) */}
-          {documents.length > 0 && (
-            <div className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 sm:py-0 border-b sm:border-b-0 sm:border-r border-slate-200 shrink-0 w-full sm:w-auto">
-              <FileText className="w-4 h-4 text-indigo-500 shrink-0" />
+        {/* QUESTION PICKER CARD */}
+        <div className="bg-white rounded-2xl shadow-xs border border-slate-200 p-3 sm:p-4 space-y-3">
+          {/* Row 1: Document Selector Dropdown & Filter */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+            <div className="flex items-center space-x-2">
+              <FileText className="w-4 h-4 text-indigo-600 shrink-0" />
+              <span className="text-xs font-bold text-slate-700 uppercase tracking-wider shrink-0">
+                Question Paper:
+              </span>
               <select
                 value={selectedDocId}
-                onChange={(e) => {
-                  setSelectedDocId(e.target.value);
-                  setErrorMsg(null);
-                  setSearchPerformed(false);
-                  setSearchResults([]);
-                }}
-                className={`bg-slate-100/90 hover:bg-slate-200/80 text-xs font-semibold py-1.5 px-2.5 rounded-lg border-0 focus:ring-0 focus:outline-hidden cursor-pointer w-full sm:w-auto sm:max-w-[220px] truncate transition-colors ${
-                  !selectedDocId ? 'text-slate-500 font-normal italic' : 'text-slate-800'
+                onChange={(e) => handleDocChange(e.target.value)}
+                className={`text-xs font-semibold py-1.5 px-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden cursor-pointer w-full sm:w-auto sm:max-w-xs truncate transition-all ${
+                  !selectedDocId ? 'bg-slate-50 text-slate-500 italic' : 'bg-slate-100 text-slate-800'
                 }`}
                 title="Select Question Paper / PDF"
               >
@@ -241,59 +206,64 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                 ))}
               </select>
             </div>
-          )}
 
-          {/* Search Icon & Text Input */}
-          <div className="flex-1 flex items-center px-2.5 sm:px-3 py-1 sm:py-1.5 min-w-0">
-            <Search className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 shrink-0 mr-2" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Search question number (e.g. 1, 1(a), 2(b))..."
-              className="w-full text-xs sm:text-sm md:text-base font-semibold text-slate-900 placeholder-slate-400 bg-transparent border-0 focus:outline-hidden focus:ring-0"
-              autoFocus
-            />
-          </div>
-
-          {/* Search Action Button */}
-          <button
-            onClick={() => handleSearch()}
-            disabled={searching}
-            className="flex items-center justify-center space-x-2 px-5 sm:px-6 py-2.5 sm:py-3 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-xs transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shrink-0 w-full sm:w-auto"
-          >
-            {searching ? (
-              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-            ) : (
-              <>
-                <span>Search</span>
-                <ArrowRight className="w-4 h-4" />
-              </>
+            {selectedDocId && currentDocQuestions.length > 8 && (
+              <div className="flex items-center space-x-1.5 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-lg text-xs w-full sm:w-auto">
+                <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                <input
+                  type="text"
+                  value={filterQuery}
+                  onChange={(e) => setFilterQuery(e.target.value)}
+                  placeholder="Filter question..."
+                  className="bg-transparent text-xs text-slate-800 placeholder-slate-400 focus:outline-hidden w-full sm:w-32"
+                />
+              </div>
             )}
-          </button>
-        </div>
-
-        {/* Quick Format Tags under the single search bar */}
-        <div className="mt-2.5 flex flex-wrap items-center justify-between text-xs text-slate-500 px-1 gap-2">
-          <div className="flex items-center space-x-1.5 overflow-x-auto max-w-full pb-1 sm:pb-0">
-            <HelpCircle className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-            <span className="shrink-0 text-[11px] sm:text-xs">Try:</span>
-            {['1', '1(a)', '1(b)', '2(a)', '10(a)'].map((tag) => (
-              <button
-                key={tag}
-                onClick={() => handleSelectQuestionTag(tag)}
-                className="font-mono bg-white hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 px-2 py-0.5 rounded text-slate-700 font-semibold cursor-pointer transition-colors text-[11px] shrink-0"
-              >
-                {tag}
-              </button>
-            ))}
           </div>
 
-          {documents.length > 0 && (
-            <span className="text-slate-400 text-[10px] sm:text-[11px] shrink-0">
-              {documents.length} PDF paper{documents.length !== 1 ? 's' : ''} available
-            </span>
+          {/* Row 2: Real Question Numbers (Same style as Try tags) */}
+          {selectedDocId ? (
+            currentDocQuestions.length > 0 ? (
+              <div className="pt-2.5 border-t border-slate-100">
+                <div className="flex items-center space-x-1.5 mb-2 text-xs text-slate-500">
+                  <Sparkles className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                    Questions ({currentDocQuestions.length}):
+                  </span>
+                </div>
+                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                  {visibleQuestions.map((q, idx) => {
+                    const isSelected = currentMatch?.question.question_number === q.question_number;
+                    return (
+                      <button
+                        key={`${q.question_number}-${idx}`}
+                        onClick={() => handleSelectQuestionDirect(q, currentDoc!)}
+                        className={`font-mono text-xs px-2.5 py-1 rounded-lg font-semibold transition-all cursor-pointer ${
+                          isSelected
+                            ? 'bg-indigo-600 text-white shadow-xs scale-105 ring-2 ring-indigo-300'
+                            : 'bg-white hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 text-slate-700 shadow-2xs'
+                        }`}
+                        title={q.question_name || `Question ${q.question_number}`}
+                      >
+                        {q.question_number}
+                      </button>
+                    );
+                  })}
+                  {visibleQuestions.length === 0 && (
+                    <span className="text-xs text-slate-400 italic">No questions matching "{filterQuery}"</span>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="pt-2 border-t border-slate-100 text-xs text-slate-400 italic">
+                No questions found in this document.
+              </div>
+            )
+          ) : (
+            <div className="pt-2 border-t border-slate-100 text-xs text-slate-500 flex items-center space-x-1.5">
+              <HelpCircle className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              <span>Please select a question paper above to view all its question numbers.</span>
+            </div>
           )}
         </div>
       </div>
@@ -427,34 +397,11 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
               <AlertCircle className="w-6 h-6" />
             </div>
             <h3 className="text-base font-bold text-slate-800">
-              Question "{searchQuery}" Not Found
+              No Question Selected
             </h3>
             <p className="text-xs text-slate-500 max-w-md mx-auto mt-1">
-              Could not find any question matching "{searchQuery}" in the uploaded question papers.
+              Please click any available question number pill above to view its content.
             </p>
-
-            {/* Show available question tags from available documents */}
-            {documents.length > 0 && (
-              <div className="mt-5 pt-5 border-t border-slate-100">
-                <p className="text-xs font-semibold text-slate-600 mb-2">
-                  Available questions in uploaded papers:
-                </p>
-                <div className="flex flex-wrap justify-center gap-1.5 max-w-lg mx-auto">
-                  {documents.flatMap((doc) =>
-                    (doc.extracted_content?.questions || []).map((q, idx) => (
-                      <button
-                        key={`${doc.id}-${idx}`}
-                        onClick={() => handleSelectQuestionTag(q.question_number, doc.id)}
-                        className="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 rounded-lg text-xs font-mono font-medium text-slate-700 transition-colors cursor-pointer"
-                        title={`From: ${doc.display_name || doc.file_name}`}
-                      >
-                        {q.question_number}
-                      </button>
-                    ))
-                  )}
-                </div>
-              </div>
-            )}
           </div>
         )}
 
@@ -462,13 +409,13 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
         {!searchPerformed && documents.length > 0 && (
           <div className="border border-dashed border-slate-300 rounded-2xl p-10 text-center bg-slate-50/50">
             <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-3">
-              <Search className="w-6 h-6" />
+              <Sparkles className="w-6 h-6 text-indigo-500" />
             </div>
             <h3 className="text-base font-semibold text-slate-800">
-              Instant Question Search
+              Select a Question to View
             </h3>
             <p className="text-xs text-slate-500 max-w-md mx-auto mt-1">
-              Type any question number (e.g. <code className="font-mono bg-white px-1.5 py-0.5 rounded border border-slate-200 text-slate-700 font-bold">1(a)</code>) directly into the search bar and hit Enter.
+              Select a question paper above and click on any question number to instantly view its complete source code and output.
             </p>
           </div>
         )}
